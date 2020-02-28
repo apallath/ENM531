@@ -15,7 +15,7 @@
 
 	- Forecasting and control of dynamical systems:
 		- [Model Predictive Control](https://arxiv.org/abs/1905.10094)
-		- [Reinforcement learning]()
+		- [Reinforcement learning](https://openreview.net/pdf?id=HyEtjoCqFX)
 
 	- Modeling and simulation of continuum systems:
 		- [Solid mechanics](https://www.sciencedirect.com/science/article/pii/S0167844219306858)
