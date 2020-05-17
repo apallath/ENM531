@@ -10,64 +10,64 @@ import numpy as np
 import matplotlib.pyplot as plt
 from pyDOE import lhs
 
-from models import GPRegression
+from models_GP import GPRegression
 
 np.random.seed(1234)
 
-if __name__ == "__main__":    
-    
-    N = 80
+if __name__ == "__main__":
+
+    N = 20
     D = 1
     lb = -1.0*np.ones(D)
     ub = 1.0*np.ones(D)
     noise = 0.2
-    
+
     def f(x):
         return x*np.sin(2.0*np.pi*x)
 #        return (x<0.0) + 1.0
 
-    # Training data    
+    # Training data
     X = lb + (ub-lb)*lhs(D, N)
     y = f(X)
     y = y + noise*np.std(y)*np.random.randn(N,D)
-    
+
     # Test data
     nn = 500
     X_star = np.linspace(-2.0, 2.0, nn)[:,None]
     y_star = f(X_star)
-    
+
     # Define model
     model = GPRegression(X, y)
-        
-    # Train 
+
+    # Train
     model.train()
-    
+
     # Predict
     y_pred, y_var = model.predict(X_star)
     y_var = np.abs(np.diag(y_var))
-           
-    # Check accuracy                  
+
+    # Check accuracy
     error = np.linalg.norm(y_pred-y_star,2)/np.linalg.norm(y_star,2)
     print("Relative L2 error u: %e" % (error))
-    
+
     # Draw samples from the prior and posterior
     Y0 = model.draw_prior_samples(X_star, 100)
     YP = model.draw_posterior_samples(X_star, 100)
-    
+
     # Plot predictions
     plt.figure(1, figsize=(10, 8), dpi=80, facecolor='w', edgecolor='k')
     plt.plot(X_star, y_star, 'b-', label = "Exact", linewidth=2)
     plt.plot(X_star, y_pred, 'r--', label = "Prediction", linewidth=2)
     lower = y_pred - 2.0*np.sqrt(y_var[:,None])
     upper = y_pred + 2.0*np.sqrt(y_var[:,None])
-    plt.fill_between(X_star.flatten(), lower.flatten(), upper.flatten(), 
+    plt.fill_between(X_star.flatten(), lower.flatten(), upper.flatten(),
                      facecolor='orange', alpha=0.5, label="Two std band")
     plt.plot(X,y,'bo', markersize = 12, alpha = 0.5, label = "Data")
     plt.legend(frameon=False,loc='upper left')
     ax = plt.gca()
     plt.xlabel('$x$')
     plt.ylabel('$f(x)$')
-    
+
     # Plot samples
     plt.figure(2, figsize=(10, 8), dpi=80, facecolor='w', edgecolor='k')
     plt.subplot(2,1,1)
@@ -83,4 +83,3 @@ if __name__ == "__main__":
     plt.xlabel('$x$')
     plt.ylabel('$f(x)$')
     plt.title("Posterior samples")
-    
